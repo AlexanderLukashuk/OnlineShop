@@ -1,0 +1,10 @@
+/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/bin/Debug/netcoreapp3.1/OnlineShop.deps.json
+/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/bin/Debug/netcoreapp3.1/OnlineShop.runtimeconfig.json
+/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/bin/Debug/netcoreapp3.1/OnlineShop.runtimeconfig.dev.json
+/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/bin/Debug/netcoreapp3.1/OnlineShop.dll
+/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/bin/Debug/netcoreapp3.1/OnlineShop.pdb
+/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/obj/Debug/netcoreapp3.1/OnlineShop.csprojAssemblyReference.cache
+/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/obj/Debug/netcoreapp3.1/OnlineShop.AssemblyInfoInputs.cache
+/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/obj/Debug/netcoreapp3.1/OnlineShop.AssemblyInfo.cs
+/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/obj/Debug/netcoreapp3.1/OnlineShop.dll
+/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/obj/Debug/netcoreapp3.1/OnlineShop.pdb
