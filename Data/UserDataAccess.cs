@@ -2,43 +2,92 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using OnlineShop.Models;
+using System.Data.Common;
+using System.Reflection;
+using Microsoft.Extensions.Configuration;
 
 namespace OnlineShop.Data
 {
     public class UserDataAccess : IConnection
     {
-        public SqlConnection OpenConnection()
+        public DbProviderFactory CreateFactory()
         {
-            SqlConnection newConnection = new SqlConnection();
-            newConnection.ConnectionString = "Server = localhost; Database = OnlineShopDatabase; Trusted_Connection = True;";
+            DbProviderFactories.RegisterFactory("mssql", SqlClientFactory.Instance);
+            DbProviderFactory factory = DbProviderFactories.GetFactory("mssql");
+
+            return factory;
+        }
+        public DbConnection OpenConnection(DbProviderFactory factory, IConfigurationRoot configuration)
+        {
+            //var connectionString = configuration.GetSection("connectionStrings")["onlineshop"];
+
+            DbConnection newConnection = factory.CreateConnection();
+            //newConnection.ConnectionString = "Server = localhost; Database = OnlineShopDatabase; Trusted_Connection = True;";
+            newConnection.ConnectionString = configuration.GetSection("connectionStrings")["onlineshop"];
             newConnection.Open();
 
             return newConnection;
         }
-        public void Create(User user)
+
+        public string GetConnectionString(IConfigurationRoot configuration)
+        {
+            var connectionString = configuration.GetSection("connectionStrings")["onlineshop"];
+
+            return connectionString;
+        }
+
+        /*public void CreteParams(DbCommand command)
+        {
+            //Assembly myAssembly = Assembly.LoadFrom("/Users/sanya/csharp_study/csharp_source/ado.net/OnlineShop/Models/User.cs");
+            Type myType = Type.GetType("/Users/sanya/csharp_study/csharp_source/ado.net/OnlineShop/Models/User.cs", false, true);
+            string columnName;
+            foreach (MemberInfo info in myType.GetMembers())
+            {
+                if (info.MemberType == MemberTypes.Property)
+                {
+                    columnName = typeof(info.MemberType);
+                }
+                //Console.WriteLine($"{mi.DeclaringType} {mi.MemberType} {mi.Name}");
+            }
+        }*/
+        public void Create(User user, Profile profile)
         {
             /*SqlConnection connection = new SqlConnection();
             connection.ConnectionString = "Server = localhost; Database = OnlineShopDatabase; Trusted_Connection = True;";
             connection.Open();*/
-            var connection = OpenConnection();
 
-            SqlTransaction transaction = connection.BeginTransaction();
+            /*DbProviderFactories.RegisterFactory("mssql", SqlClientFactory.Instance);
+            DbProviderFactory factory = DbProviderFactories.GetFactory("mssql");
+            DbConnection connection = factory.CreateConnection();
+            connection.ConnectionString = "Server = localhost; Database = OnlineShopDatabase; Trusted_Connection = True;";
+            connection.Open();*/
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appSettings.json")
+                .Build();
 
-            SqlCommand command = new SqlCommand($"insert into Users(Id, Email, Password) values (@Id, @Email, @Password);", connection);
+            /*var factory = CreateFactory();
+            var connection = OpenConnection(factory, configuration);
+            //var connection = OpenConnection();
 
-            SqlParameter idParameter = command.CreateParameter();
+            DbTransaction transaction = connection.BeginTransaction();
+
+            DbCommand command = factory.CreateCommand();
+            command.CommandText = $"insert into Users(Id, Email, Password) values (@Id, @Email, @Password);";
+            command.Connection = connection;
+
+            DbParameter idParameter = command.CreateParameter();
             idParameter.ParameterName = "Id";
             idParameter.Value = user.Id;
 
             command.Parameters.Add(idParameter);
 
-            SqlParameter emailParameter = command.CreateParameter();
+            DbParameter emailParameter = command.CreateParameter();
             emailParameter.ParameterName = "Email";
             emailParameter.Value = user.Email;
 
             command.Parameters.Add(emailParameter);
 
-            SqlParameter passwordParameter = command.CreateParameter();
+            DbParameter passwordParameter = command.CreateParameter();
             passwordParameter.ParameterName = "Password";
             passwordParameter.Value = user.Password;
 
@@ -54,11 +103,18 @@ namespace OnlineShop.Data
             catch
             {
                 transaction.Rollback();
+            }*/
+
+            using (var context = new ApplicationContext(GetConnectionString(configuration)))
+            {
+                context.Users.Add(user);
+                context.Profiles.Add(profile);
+                context.SaveChanges();
             }
 
-            command.Dispose();
-            transaction.Dispose();
-            connection.Close();
+            //command.Dispose();
+            //transaction.Dispose();
+            //connection.Close();
         }
 
         public void ExecuteInTransaction(SqlConnection connection, params SqlCommand[] sqlCommands)
@@ -86,11 +142,20 @@ namespace OnlineShop.Data
             /*SqlConnection connection = new SqlConnection();
             connection.ConnectionString = "Server = localhost; Database = OnlineShopDatabase; Trusted_Connection = True;";
             connection.Open();*/
-            var connection = OpenConnection();
+            //var connection = OpenConnection();
+             var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appSettings.json")
+                .Build();
 
-            SqlCommand command = new SqlCommand($"select top 1 from Users where email='{user.Email}';", connection);
+            var factory = CreateFactory();
+            var connection = OpenConnection(factory, configuration);
 
-            SqlDataReader reader = command.ExecuteReader();
+            //DbCommand command = new SqlCommand($"select top 1 from Users where email='{user.Email}';", connection);
+            DbCommand command = factory.CreateCommand();
+            command.CommandText = $"select top 1 from Users where email='{user.Email}';";
+            command.Connection = connection;
+
+            DbDataReader reader = command.ExecuteReader();
 
             User gotUser = new User();
 
@@ -114,11 +179,19 @@ namespace OnlineShop.Data
         public List<User> GetAll()
         {
             List<User> users = new List<User>();
-            var connection = OpenConnection();
+            //var connection = OpenConnection();
+             var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appSettings.json")
+                .Build();
 
-            SqlCommand command = new SqlCommand($"select * from Users;", connection);
-            
-            SqlDataReader reader = command.ExecuteReader();
+            var factory = CreateFactory();
+            var connection = OpenConnection(factory, configuration);
+
+            DbCommand command = factory.CreateCommand();
+            command.CommandText = $"select * from Users;";
+            command.Connection = connection;
+
+            DbDataReader reader = command.ExecuteReader();
 
             User gotUser = new User();
 

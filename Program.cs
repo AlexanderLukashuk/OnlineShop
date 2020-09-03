@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OnlineShop.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace OnlineShop
 {
@@ -50,6 +51,17 @@ namespace OnlineShop
             */
             // CRUD - действия
             // Create Read Update Delete
+            
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appSettings.json")
+                .Build();
+
+            var isAdmin = bool.Parse(configuration["isAdmin"]);
+            
+            var connectionString = configuration.GetSection("connectionStrings")["testDb"];
+            Console.WriteLine(isAdmin);
+            //Console.WriteLine(connectionString);
+            //Console.Read();
         }
     }
 }

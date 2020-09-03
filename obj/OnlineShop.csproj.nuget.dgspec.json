@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/OnlineShop.csproj": {}
+    "/Users/sanya/csharp_study/csharp_source/ado.net/OnlineShop/OnlineShop.csproj": {}
   },
   "projects": {
-    "/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/OnlineShop.csproj": {
+    "/Users/sanya/csharp_study/csharp_source/ado.net/OnlineShop/OnlineShop.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/OnlineShop.csproj",
+        "projectUniqueName": "/Users/sanya/csharp_study/csharp_source/ado.net/OnlineShop/OnlineShop.csproj",
         "projectName": "OnlineShop",
-        "projectPath": "/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/OnlineShop.csproj",
+        "projectPath": "/Users/sanya/csharp_study/csharp_source/ado.net/OnlineShop/OnlineShop.csproj",
         "packagesPath": "/Users/sanya/.nuget/packages/",
-        "outputPath": "/Users/sanya/csharp_study/csharp_source/ado.net/lesson_1/OnlineShop/obj/",
+        "outputPath": "/Users/sanya/csharp_study/csharp_source/ado.net/OnlineShop/obj/",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
@@ -39,6 +39,18 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[3.1.7, )"
+            },
+            "Microsoft.Extensions.Configuration.EnvironmentVariables": {
+              "target": "Package",
+              "version": "[3.1.7, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[3.1.7, )"
+            },
             "System.Data.SqlClient": {
               "target": "Package",
               "version": "[4.8.2, )"

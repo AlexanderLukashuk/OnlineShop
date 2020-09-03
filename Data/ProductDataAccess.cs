@@ -2,58 +2,80 @@ using OnlineShop.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Data.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace OnlineShop.Data
 {
     public class ProductDataAccess : IConnection
     {
-        public SqlConnection OpenConnection()
+        public DbProviderFactory CreateFactory()
         {
-            SqlConnection newConnection = new SqlConnection();
-            newConnection.ConnectionString = "Server = localhost; Database = OnlineShopDatabase; Trusted_Connection = True;";
+            DbProviderFactories.RegisterFactory("mssql", SqlClientFactory.Instance);
+            DbProviderFactory factory = DbProviderFactories.GetFactory("mssql");
+
+            return factory;
+        }
+        public DbConnection OpenConnection(DbProviderFactory factory, IConfigurationRoot configuration)
+        {
+            DbConnection newConnection = factory.CreateConnection();
+            newConnection.ConnectionString = configuration.GetSection("connectionStrings")["onlineshop"];
             newConnection.Open();
 
             return newConnection;
         }
+        public string GetConnectionString(IConfigurationRoot configuration)
+        {
+            var connectionString = configuration.GetSection("connectionStrings")["onlineshop"];
+
+            return connectionString;
+        }
         public void Create(Laptop product)
         {
-            var connection = OpenConnection();
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appSettings.json")
+                .Build();
 
-            SqlTransaction transaction = connection.BeginTransaction();
+            /*var factory = CreateFactory();
+            var connection = OpenConnection(factory, configuration);
 
-            SqlCommand command = new SqlCommand($"insert into Product(Id, Name, Model, Manufacturer, Type, Title) values (@Id, @Name, @Model, @Manufacturer, @Type, @Title);", connection);
+            DbTransaction transaction = connection.BeginTransaction();
 
-            SqlParameter idParameter = command.CreateParameter();
+            DbCommand command = factory.CreateCommand();
+            command.CommandText = $"insert into Product(Id, Name, Model, Manufacturer, Type, Title) values (@Id, @Name, @Model, @Manufacturer, @Type, @Title);";
+            command.Connection = connection;
+
+            DbParameter idParameter = command.CreateParameter();
             idParameter.ParameterName = "Id";
             idParameter.Value = product.Id;
 
             command.Parameters.Add(idParameter);
 
-            SqlParameter nameParameter = command.CreateParameter();
+            DbParameter nameParameter = command.CreateParameter();
             nameParameter.ParameterName = "Name";
             nameParameter.Value = product.Name;
 
             command.Parameters.Add(nameParameter);
 
-            SqlParameter modelParameter = command.CreateParameter();
+            DbParameter modelParameter = command.CreateParameter();
             modelParameter.ParameterName = "Model";
             modelParameter.Value = product.Model;
 
             command.Parameters.Add(modelParameter);
 
-            SqlParameter manufacturerParameter = command.CreateParameter();
+            DbParameter manufacturerParameter = command.CreateParameter();
             manufacturerParameter.ParameterName = "Manufacturer";
             manufacturerParameter.Value = product.Manufacturer;
 
             command.Parameters.Add(manufacturerParameter);
 
-            SqlParameter typeParameter = command.CreateParameter();
+            DbParameter typeParameter = command.CreateParameter();
             typeParameter.ParameterName = "Type";
             typeParameter.Value = product.Type;
 
             command.Parameters.Add(typeParameter);
 
-            SqlParameter titleParameter = command.CreateParameter();
+            DbParameter titleParameter = command.CreateParameter();
             titleParameter.ParameterName = "Title";
             titleParameter.Value = product.Title;
 
@@ -73,16 +95,29 @@ namespace OnlineShop.Data
 
             command.Dispose();
             transaction.Dispose();
-            connection.Close();
+            connection.Close();*/
+
+            using (var context = new ApplicationContext(GetConnectionString(configuration)))
+            {
+                context.Laptops.Add(product);
+                context.SaveChanges();
+            }
         }
 
         public Laptop Get(Laptop product)
         {
-            var connection = OpenConnection();
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appSettings.json")
+                .Build();
 
-            SqlCommand command = new SqlCommand($"select top 1 from Product where name='{product.Name}';", connection);
+            var factory = CreateFactory();
+            var connection = OpenConnection(factory, configuration);
 
-            SqlDataReader reader = command.ExecuteReader();
+            DbCommand command = factory.CreateCommand();
+            command.CommandText = $"select top 1 from Product where name='{product.Name}';";
+            command.Connection = connection;
+
+            DbDataReader reader = command.ExecuteReader();
 
             Laptop gotProduct = new Laptop();
 
